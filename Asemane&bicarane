@@ -1,0 +1,299 @@
+# Creating a real ZIP of the "Sabetpoor AL — Luxury Edition" Next.js + PWA-ready project.
+# The zip will be written to /mnt/data/SabetpoorAL_real.zip
+# It includes:
+# - package.json, next.config.js (with next-pwa config)
+# - public/manifest.json, logo and background placeholders
+# - src/app layout/page, components, lib (deepseek)
+# - README.md and .gitignore
+# After execution, the notebook will return the path to the zip for download.
+
+import os, textwrap, zipfile, base64, json
+
+root = "/mnt/data/SabetpoorAL_real"
+os.makedirs(root, exist_ok=True)
+os.makedirs(os.path.join(root, "public"), exist_ok=True)
+os.makedirs(os.path.join(root, "src", "app"), exist_ok=True)
+os.makedirs(os.path.join(root, "src", "components"), exist_ok=True)
+os.makedirs(os.path.join(root, "src", "lib"), exist_ok=True)
+
+# placeholder image (1x1 png)
+tiny_png_b64 = ("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMA"
+                "ASsJTYQAAAAASUVORK5CYII=")
+logo_path = os.path.join(root, "public", "logo.png")
+bg_path = os.path.join(root, "public", "bg-galaxy.jpg")
+with open(logo_path, "wb") as f:
+    f.write(base64.b64decode(tiny_png_b64))
+with open(bg_path, "wb") as f:
+    f.write(base64.b64decode(tiny_png_b64))
+
+# package.json
+package_json = {
+  "name": "sabetpoor-al",
+  "version": "1.0.0",
+  "private": True,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "next-pwa": "^5.6.0"
+  }
+}
+with open(os.path.join(root, "package.json"), "w", encoding="utf-8") as f:
+    json.dump(package_json, f, ensure_ascii=False, indent=2)
+
+# next.config.js with next-pwa
+next_config = textwrap.dedent("""\
+const withPWA = require("next-pwa")({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development"
+});
+
+module.exports = withPWA({
+  reactStrictMode: true,
+  images: {
+    unoptimized: true
+  }
+});
+""")
+with open(os.path.join(root, "next.config.js"), "w", encoding="utf-8") as f:
+    f.write(next_config)
+
+# public/manifest.json
+manifest = {
+  "name": "Sabetpoor AL",
+  "short_name": "Sabetpoor",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00eaff",
+  "icons": [
+    {"src": "/logo.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/logo.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
+with open(os.path.join(root, "public", "manifest.json"), "w", encoding="utf-8") as f:
+    json.dump(manifest, f, ensure_ascii=False, indent=2)
+
+# README.md
+readme = textwrap.dedent("""\
+Sabetpoor AL - Luxury Edition
+=============================
+
+This is a Next.js demo project (PWA-ready) for the "Sabetpoor AL" Luxury Edition stone analyzer.
+
+How to run locally:
+1. Install node >= 18
+2. npm install
+3. npm run dev
+4. Open http://localhost:3000
+
+To produce APK:
+- Deploy to Vercel or any public HTTPS host, then convert the PWA to APK using a PWA->APK service.
+
+Files included:
+- next.config.js (with next-pwa)
+- public/manifest.json, logo.png, bg-galaxy.jpg
+- src/app (layout.js, page.js, globals.css)
+- src/components (HeaderLogo, FloatingButton, UploadBox, StoneAnalyzer)
+- src/lib/deepseek.js (mock)
+""")
+with open(os.path.join(root, "README.md"), "w", encoding="utf-8") as f:
+    f.write(readme)
+
+# .gitignore
+gitignore = textwrap.dedent("""\
+node_modules
+.next
+.env.local
+.env
+.DS_Store
+""")
+with open(os.path.join(root, ".gitignore"), "w", encoding="utf-8") as f:
+    f.write(gitignore)
+
+# src/app/globals.css
+globals_css = textwrap.dedent("""\
+:root{
+  --turquoise: #1ED3C5;
+}
+html,body{height:100%;margin:0;padding:0;font-family:Arial, sans-serif;background:#071029;color:#fff}
+body { background: url('/bg-galaxy.jpg') center/cover no-repeat fixed; }
+.glass { backdrop-filter: blur(12px); background: rgba(255,255,255,0.06); border-radius:16px; border:1px solid rgba(255,255,255,0.08); padding:16px;}
+.center { display:flex; align-items:center; justify-content:center; }
+.container { max-width:920px; margin:40px auto; padding:20px; }
+""")
+with open(os.path.join(root, "src", "app", "globals.css"), "w", encoding="utf-8") as f:
+    f.write(globals_css)
+
+# src/app/layout.js
+layout_js = textwrap.dedent("""\
+import './globals.css'
+
+export const metadata = {
+  title: "Sabetpoor AL",
+  description: "Stone Analyzer - Luxury Edition"
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="fa" dir="rtl">
+      <body>{children}</body>
+    </html>
+  );
+}
+""")
+with open(os.path.join(root, "src", "app", "layout.js"), "w", encoding="utf-8") as f:
+    f.write(layout_js)
+
+# src/app/page.js
+page_js = textwrap.dedent("""\
+"use client";
+import { useState } from "react";
+import HeaderLogo from "../components/HeaderLogo";
+import FloatingButton from "../components/FloatingButton";
+import UploadBox from "../components/UploadBox";
+import StoneAnalyzer from "../components/StoneAnalyzer";
+import { analyzeStone } from "../lib/deepseek";
+
+export default function Home() {
+  const [result, setResult] = useState(null);
+
+  const handleUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      const data = await analyzeStone(base64);
+      setResult(data);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <>
+      <HeaderLogo />
+      <div className="container">
+        <UploadBox onImage={handleUpload} />
+        <StoneAnalyzer data={result} />
+      </div>
+      <FloatingButton />
+    </>
+  );
+}
+""")
+with open(os.path.join(root, "src", "app", "page.js"), "w", encoding="utf-8") as f:
+    f.write(page_js)
+
+# components
+header = textwrap.dedent("""\
+export default function HeaderLogo() {
+  return (
+    <div style={{
+      position: "fixed",
+      top: 18,
+      right: 18,
+      color: "var(--turquoise)",
+      fontSize: 18,
+      fontWeight: "700",
+      textShadow: "0 0 8px rgba(30,211,197,0.6)"
+    }}>
+      Sabetpoor AL
+    </div>
+  );
+}
+""")
+with open(os.path.join(root, "src", "components", "HeaderLogo.js"), "w", encoding="utf-8") as f:
+    f.write(header)
+
+floating = textwrap.dedent("""\
+export default function FloatingButton({ onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        position: "fixed",
+        bottom: 28,
+        right: 28,
+        width: 64,
+        height: 64,
+        borderRadius: "50%",
+        background: "rgba(255,255,255,0.06)",
+        backdropFilter: "blur(8px)",
+        border: "2px solid rgba(30,211,197,0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontSize: 26,
+        color: "white",
+        cursor: "pointer"
+      }}
+    >
+      ⚡
+    </div>
+  );
+}
+""")
+with open(os.path.join(root, "src", "components", "FloatingButton.js"), "w", encoding="utf-8") as f:
+    f.write(floating)
+
+upload_box = textwrap.dedent("""\
+export default function UploadBox({ onImage }) {
+  return (
+    <div className="glass center" style={{ flexDirection: "column", gap:12 }}>
+      <h3>آپلود عکس سنگ</h3>
+      <input type="file" accept="image/*" onChange={(e)=> onImage(e.target.files[0])} />
+    </div>
+  );
+}
+""")
+with open(os.path.join(root, "src", "components", "UploadBox.js"), "w", encoding="utf-8") as f:
+    f.write(upload_box)
+
+stone = textwrap.dedent("""\
+export default function StoneAnalyzer({ data }) {
+  if(!data) return null;
+  return (
+    <div className="glass" style={{ marginTop:20 }}>
+      <h2>نتیجه تحلیل سنگ</h2>
+      <p><strong>نوع:</strong> {data.type}</p>
+      <p><strong>احتمال شهاب‌سنگ:</strong> {data.meteoriteChance}</p>
+      <p><strong>چگالی:</strong> {data.density}</p>
+      <p><strong>ارزش جهانی:</strong> {data.value}</p>
+      <h3>{data.final}</h3>
+    </div>
+  );
+}
+""")
+with open(os.path.join(root, "src", "components", "StoneAnalyzer.js"), "w", encoding="utf-8") as f:
+    f.write(stone)
+
+# lib/deepseek.js
+deepseek = textwrap.dedent("""\
+export async function analyzeStone(base64) {
+  // Mock analysis. Replace with real API call to DeepSeek when available.
+  return {
+    type: "بازالت / آذرین",
+    meteoriteChance: "کم (≈3%)",
+    density: "2.8 g/cm3",
+    value: "10 - 50 USD per gram (تقریبی)",
+    final: "تحلیل اولیه — نیاز به آزمایشگاه برای تایید"
+  };
+}
+""")
+with open(os.path.join(root, "src", "lib", "deepseek.js"), "w", encoding="utf-8") as f:
+    f.write(deepseek)
+
+# create zip
+zip_path = "/mnt/data/SabetpoorAL_real.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for folder, _, files in os.walk(root):
+        for fn in files:
+            full = os.path.join(folder, fn)
+            arc = os.path.relpath(full, root)
+            z.write(full, arc)
+
+zip_path
