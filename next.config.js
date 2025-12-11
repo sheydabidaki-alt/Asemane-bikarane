@@ -1,1 +1,1 @@
-module.exports = { reactStrictMode: true, experimental:{appDir:true} }
+// Placeholder for next.config.js

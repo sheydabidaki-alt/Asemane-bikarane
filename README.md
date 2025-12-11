@@ -1,1 +1,1 @@
-# Full Sabetpoor AL Lux Project
+// Placeholder for README.md
