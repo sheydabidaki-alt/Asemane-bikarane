@@ -1,1 +1,29 @@
-// Placeholder for package.json
+{
+  "name": "meteoric-shop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:generate": "prisma generate",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "^3.4.0",
+    "prisma": "^4.14.0",
+    "@prisma/client": "^4.14.0",
+    "multer": "^1.4.5-lts.1",
+    "axios": "^1.4.0",
+    "uuid": "^9.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "s3-client": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "8.37.0"
+  }
+}
