@@ -1,26 +1,20 @@
-# Meteoric Shop — Local Setup (Developer)
+Sabetpoor AL - Luxury Edition
+=============================
 
-Requirements:
-- Node 18+
-- Docker & docker-compose
-- (Optional) MinIO or AWS S3 credentials
+This is a Next.js demo project (PWA-ready) for the "Sabetpoor AL" Luxury Edition stone analyzer.
 
-Steps:
+How to run locally:
+1. Install node >= 18
+2. npm install
+3. npm run dev
+4. Open http://localhost:3000
 
-1. Clone repo
-2. Copy .env.example to .env and fill values:
-   - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/meteoric
-   - NEXT_PUBLIC_BASE_URL=http://localhost:3000
-   - MINIO config if used
-3. Start DB + MinIO:
-   docker-compose up -d
-4. Install deps:
-   npm install
-5. Generate Prisma client and migrate:
-   npx prisma generate
-   npx prisma migrate dev --name init
-6. Create uploads folder:
-   mkdir -p public/uploads
-7. Run dev:
-   npm run dev
-8. Open http://localhost:3000
+To produce APK:
+- Deploy to Vercel or any public HTTPS host, then convert the PWA to APK using a PWA->APK service.
+
+Files included:
+- next.config.js (with next-pwa)
+- public/manifest.json, logo.png, bg-galaxy.jpg
+- src/app (layout.js, page.js, globals.css)
+- src/components (HeaderLogo, FloatingButton, UploadBox, StoneAnalyzer)
+- src/lib/deepseek.js (mock)
