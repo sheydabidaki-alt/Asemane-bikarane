@@ -1,0 +1,5 @@
+{
+"name":"Sabetpoor AL Lux","short_name":"Sabetpoor",
+"start_url":"/","display":"standalone","background_color":"#fff",
+"icons":[{"src":"/icons/sabetpoor.png","sizes":"256x256","type":"image/png"}]
+}

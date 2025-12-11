@@ -1,2 +1,1 @@
-# Asemane-bikarane
-تشخیص سنگ و شهاب سنگ 
+# Full Sabetpoor AL Lux Project
